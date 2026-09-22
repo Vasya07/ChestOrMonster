@@ -12,7 +12,8 @@ public class Player : BaseEntity
     public override double Hp { get; protected set; } = _maxHp;
     public override double Atk => Weapon.Damage;
     public override double Def => Armor.Def;
-    public override DamageType AttackType { get; }
+    public override DamageType AttackType =>
+        Weapon is Bow ? DamageType.Pure : DamageType.Usual;
     public override StatusEffect Effect { get; protected set; }
     
     private static double _maxHp = 100;
@@ -24,12 +25,18 @@ public class Player : BaseEntity
         Weapon = new Weapon("Кулаки", 2);
         Armor = new Armor("Майка", 1);
         Hp = _maxHp;
-        AttackType = DamageType.Usual;
         Effect = StatusEffect.None;
     }
-    
+
     public override DamageInfo Attack()
     {
+        if (Weapon is IRangedWeapon ranged)
+        {
+            if (_random.NextDouble() > ranged.Accuracy)
+            {
+                return new DamageInfo(0, AttackType);
+            }
+        }
         return new DamageInfo(Weapon.Damage, AttackType);
     }
 
@@ -39,6 +46,9 @@ public class Player : BaseEntity
         {
             case Armor armor:
                 Armor = armor;
+                break;
+            case Bow weapon:
+                Weapon = weapon;
                 break;
             case Weapon weapon:
                 Weapon = weapon;
