@@ -14,6 +14,8 @@ public class AntiFlag : BaseEntity
     protected virtual double ReflectRatio { get; } = 0.5;
     protected virtual double MaxStoredDamage { get; } = 15;
     protected virtual double CritRate { get; }
+    protected virtual double SelfDamageRatio { get; } = 0.5;
+    protected virtual double MaxSelfDamage { get; } = 3;
 
     public AntiFlag()
     {
@@ -41,13 +43,17 @@ public class AntiFlag : BaseEntity
 
     public override DamageInfo Attack()
     {
-        double damage = Atk + StoredDamage;
+        double reflectedDamage = StoredDamage;
         StoredDamage = 0;
+
+        double damage = Atk + reflectedDamage;
 
         if (_random.NextDouble() < CritRate)
         {
             damage += 5.0;
         }
+        // АнтиФлаг тратит силы на разворот урона — теряет 50% отражённого, но не больше 3, чтобы враг не умер слишком быстро
+        Hp = Math.Max(0, Hp - Math.Min(reflectedDamage * SelfDamageRatio, MaxSelfDamage));
 
         return new DamageInfo(damage, AttackType);
     }
