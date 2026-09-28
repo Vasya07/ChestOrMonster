@@ -19,7 +19,7 @@ public class AntiFlag : BaseEntity
 
     public AntiFlag()
     {
-        Name = "АнтиФлаг";
+        Name = "Анти-Флаг";
         Hp = 12;
         Atk = 6;
         Def = 1;
@@ -52,7 +52,7 @@ public class AntiFlag : BaseEntity
         {
             damage += 5.0;
         }
-        // АнтиФлаг тратит силы на разворот урона — теряет 50% отражённого, но не больше 3, чтобы враг не умер слишком быстро
+        // Анти-Флаг тратит силы на разворот урона — теряет 50% отражённого, но не больше 3, чтобы враг не умер слишком быстро
         Hp = Math.Max(0, Hp - Math.Min(reflectedDamage * SelfDamageRatio, MaxSelfDamage));
 
         return new DamageInfo(damage, AttackType);
